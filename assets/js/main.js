@@ -6,7 +6,7 @@
 * License: https://bootstrapmade.com/license/
 */
 
-(function() {
+(function () {
   "use strict";
 
   /**
@@ -52,7 +52,7 @@
    * Toggle mobile nav dropdowns
    */
   document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function(e) {
+    navmenu.addEventListener('click', function (e) {
       e.preventDefault();
       this.parentNode.classList.toggle('active');
       this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
@@ -112,13 +112,13 @@
   /**
    * Init isotope layout and filters
    */
-  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
+  document.querySelectorAll('.isotope-layout').forEach(function (isotopeItem) {
     let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
     let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
     let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
 
     let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
+    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function () {
       initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
         itemSelector: '.isotope-item',
         layoutMode: layout,
@@ -127,8 +127,8 @@
       });
     });
 
-    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
-      filters.addEventListener('click', function() {
+    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function (filters) {
+      filters.addEventListener('click', function () {
         isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
         this.classList.add('filter-active');
         initIsotope.arrange({
@@ -146,7 +146,7 @@
    * Init swiper sliders
    */
   function initSwiper() {
-    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
+    document.querySelectorAll(".init-swiper").forEach(function (swiperElement) {
       let config = JSON.parse(
         swiperElement.querySelector(".swiper-config").innerHTML.trim()
       );
@@ -168,4 +168,73 @@
     selector: '.glightbox'
   });
 
+
+  // Partners Section
+
+  const slider = document.querySelector('.partners-slider');
+  const scrollDownBtn = document.getElementById('scrollDown');
+  const nextSection = document.getElementById('nextSection');
+
+
+  const ourPartners = document.getElementsByClassName('our-partners')[0];
+  let data = []
+  for (let i = 0; i < 18; i++) {
+    data.push({
+      id: i + 1,
+      name: `Partner ${i + 1}`,
+      img: `./assets/img/partners/part${i + 1}.png`
+    });
+  }
+
+  ourPartners.innerHTML = ''
+  data.forEach(partner => {
+    ourPartners.innerHTML += `
+                <div class="partner">
+                    <img src="${partner.img}" alt="${partner.name}">
+                </div>
+            `;
+  });
+
+  const cloneCount = Math.ceil(slider.offsetWidth / (200 + 30));
+  for (let i = 0; i < cloneCount; i++) {
+    data.slice(0, cloneCount).forEach(partner => {
+      const card = document.createElement('div');
+      card.className = 'partner';
+      card.innerHTML = `<img src="${partner.img}" alt="${partner.name}">`;
+      ourPartners.appendChild(card.cloneNode(true));
+    });
+  }
+  let speed = 1;
+  let position = 0;
+  let animationId;
+  let count = 0;
+  const itemWidth = 200 + 30;
+  function animate() {
+
+    if (-position >= (data.length * itemWidth)) {
+      position += data.length * itemWidth;
+    }
+    position -= speed;
+
+
+    ourPartners.style.transform = `translateX(${position}px)`;
+    animationId = requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  slider.addEventListener('mouseenter', () => {
+    cancelAnimationFrame(animationId);
+  });
+
+  slider.addEventListener('mouseleave', () => {
+    animationId = requestAnimationFrame(animate);
+  });
+
+  window.addEventListener('resize', () => {
+    ourPartners.style.transform = 'translateX(0)';
+    position = 0;
+  });
+
+  // Partners Section
 })();
